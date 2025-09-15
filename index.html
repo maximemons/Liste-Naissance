@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Liste de naissance</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Liste de naissance</h1>
+      <p class="lead" id="welcomeUser"><b>Saisissez d'abord votre identité.</b></p>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="auth">
+      <input id="input-firstname" type="text" placeholder="Prénom" />
+      <input id="input-lastname" type="text" placeholder="Nom" />
+      <input id="input-phone" type="text" placeholder="Téléphone" />
+      <input id="input-mail" type="text" placeholder="Email" />
+      <button id="btn-save-user" class="btn secondary" onclick="login()">S'authentifier</button>
+      <button id="btn-remove-user" class="btn secondary" onclick="logout()">Se déconnecter</button>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <button id="btn-chart" class="btn cart-items" onclick="showCart()"><img src="img/cart.png"/></button>
+      <button id="btn-refresh" class="btn" onclick="reloadPage()">Rafraîchir</button>
+    </div>
+  </div>
+
+  <main>
+  	<div id="gridWrapper" style="position: relative;">
+      <div id="grid" class="grid"></div>
+      <div id="gridOverlay" class="overlay"></div>
+    </div>
+  </main>
+
+  <footer>
+    <div>
+      <center>
+        <u><b>Important:</b></u> ne vous sentez pas obligés d'acheter quoi que ce soit. Votre seule présence dans nos vie et dans celle de Johanne est amplement suffisante ♥.<br/>
+        <b>Les quantités peuvent être fractionnées (ex: 0.5).</b><br/><br/>
+      </center>
+    </div>
+  </footer>
+
+  <div id="modal" class="modal-backdrop">
+  	<div id="modal-content" class="modal-content"></div>
+  </div>
+
+  <script type="text/javascript" src="script.js"></script>
+</body>
+</html>

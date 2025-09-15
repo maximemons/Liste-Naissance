@@ -1,0 +1,378 @@
+:root {
+    --bg: #f6f7f9;
+    --card: #ffffff;
+    --muted: #6b7280;
+    --accent: #0f172a;
+    --danger: #dc2626;
+    --card-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+    --card-size-w: 260px;
+    --card-size-h: 450px;
+
+    --greenBtn: #10b981;
+    --redBtn: #dc2626;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+        Roboto, "Helvetica Neue", Arial;
+}
+* {
+    box-sizing: border-box;
+}
+html,
+body {
+    height: 100%;
+}
+body {
+    margin: 0;
+    padding: 28px;
+    background: linear-gradient(180deg, #f8fafc 0%, var(--bg) 100%);
+    color: var(--accent);
+}
+header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+h1 {
+    font-size: 20px;
+    margin: 0;
+}
+p.lead {
+    margin: 0;
+    color: var(--muted);
+}
+
+.controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 18px;
+}
+.controls .auth {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.controls input[type="text"] {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #e6e9ef;
+    background: #fff;
+}
+.controls input, .controls button  {
+    height: 32px;
+}
+.btn {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 0;
+    background: #111827;
+    color: #fff;
+    cursor: pointer;
+}
+.btn.secondary {
+    background: #eef2ff;
+    color: #0f172a;
+}
+
+#btn-chart img {
+	max-height: 100%;
+}
+
+#btn-save-user, #btn-remove-user {
+	display: none;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--card-size-w), 1fr));
+    gap: 18px;
+    align-items: start;
+}
+
+.card {
+    width: var(--card-size-w);
+    height: var(--card-size-h);
+    background: var(--card);
+    box-shadow: var(--card-shadow);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    padding-bottom: 10px;
+}
+.card:hover {
+    transform: translateY(-6px);
+}
+.card .media {
+    height: 250px;
+    /*background: #e9eef9;*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.card img {
+    width: 90%;
+    height: 250px;
+    object-fit: cover;
+    display: block;
+}
+.card .body {
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+.title {
+    font-weight: 600;
+    font-size: 15px;
+}
+.price {
+    color: var(--muted);
+    font-size: 14px;
+}
+.qty {
+    font-size: 13px;
+    color: var(--muted);
+}
+.actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.card button {
+    flex: 1;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #e6e9ef;
+    background: #d4d3d3;
+    cursor: pointer;
+}
+.card .buy {
+    background: #10b981;
+    color: #fff;
+    border: 0;
+}
+.small-input {
+    width: 80px;
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px solid #e6e9ef;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--danger);
+    border-radius: 12px;
+    backdrop-filter: blur(2px);
+}
+.grayed {
+    filter: grayscale(0.45);
+    opacity: 0.8;
+}
+
+footer {
+    margin-top: 22px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+#btn-save-user, #btn-remove-user {
+  display:  none;
+}
+
+#btn-save-user {
+  background-color: var(--greenBtn);
+}
+
+#btn-remove-user {
+ background-color: var(--redBtn); 
+ color:  white;
+}
+
+.cardDetails {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width:  100%;
+}
+
+/* Partie haute */
+.infos {
+  flex-grow: 1; /* pousse le reste vers le bas */
+}
+
+/* Partie basse (prix + boutons) */
+.bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Deux colonnes côte à côte (prix/qty ou réserver/acheter) */
+.two-cols {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.two-cols > * {
+  flex: 1; /* occupe 50% chacun */
+}
+
+/* Bouton Annuler en full width */
+.full .btn {
+  width: 90%;
+  margin: 0 auto;
+  display: block;
+}
+.full {
+    margin-top: 5px;
+}
+
+#gridWrapper {
+  position: relative; /* nécessaire pour positionner l’overlay au-dessus */
+}
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+}
+.modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: var(--card-shadow);
+}
+
+#modal .modal-content {
+  background: #fff;
+  padding: 20px;
+  width: 400px;
+  max-width: 90%;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  font-family: sans-serif;
+}
+
+.modal-content table {
+  border-collapse: collapse;
+  border: 2px solid rgb(140 140 140);
+  font-family: sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  width: 100%;
+}
+
+.modal-content thead, .modal-content tfoot {
+  background-color: rgb(228 240 245);
+}
+
+.modal-content th, .modal-content td {
+  border: 1px solid rgb(160 160 160);
+  padding: 8px 10px;
+}
+
+.modal-content td:last-of-type {
+  text-align: center;
+}
+
+.modal-content tbody > tr:nth-of-type(even) {
+  background-color: rgb(237 238 242);
+}
+
+.modal-content tfoot th {
+  text-align: right;
+}
+
+.modal-content tfoot td {
+  font-weight: bold;
+}
+
+.modal-content table img {
+    height: 15px;
+    cursor: grab;
+}
+
+#modal-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#modal-action {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top:  12px;
+}
+
+#modal .modal-content {
+  background: #fff;
+  padding: 20px;
+  width: 400px;
+  max-width: 90%;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  font-family: sans-serif;
+}
+
+.modal-cart {
+    width: 600px !important;
+}
+
+#modal h2 {
+  margin-top: 0;
+  text-align: center;
+}
+#modal .product {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+#modal .product-img {
+  width: 120px;
+  height: auto;
+  border-radius: 8px;
+}
+#modal .product-info {
+  flex: 1;
+}
+#modal .product-title {
+  margin: 0 0 5px;
+}
+#modal .product-desc {
+  font-size: 0.9em;
+  color: #555;
+}
+#modal .product-price, .product-stock {
+  margin: 4px 0;
+}
+#modal .reservation {
+  margin: 15px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#modal .total {
+  font-size: 1.2em;
+  font-weight: bold;
+  text-align: right;
+}
