@@ -15,10 +15,7 @@ async function initPoducts() {
 
 function render() {
 	if((CURRENT_PRODUCT.link || null) != null && CURRENT_PRODUCT.link.length > 3) {
-		let iframe = document.createElement("iframe");
-		iframe.src = CURRENT_PRODUCT.link;
-
-		document.getElementById("productInspiration").appendChild(iframe);
+		document.getElementById("productInspiration").innerHTML = CURRENT_USER.link;
 		document.getElementById("productInspirationDiv").style.display = "inherit";
 	}
 
