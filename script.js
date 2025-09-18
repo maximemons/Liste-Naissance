@@ -226,7 +226,7 @@ function renderSingleCard(product) {
 	          </div>
 	          <div class="bottom">
 	            <div class="row two-cols">
-	              <div class="price">${formatCurrency(product.price)}</div>
+	              <div class="price">${product.price >= 0 ? formatCurrency(product.price) : "±∞ €"}</div>
 	              <div class="qty">Restant: <strong>${product.remainQuantity} / ${product.quantity}</strong></div>
 	            </div>`
 	if(canCancelBuy) {
@@ -503,7 +503,6 @@ function showTutorialModal(idx) {
 	];
 
 	if(idx >= tutorialSteps.length) {
-		sessionStorage.setItem("isTutorialDone", "true");
 		document.getElementById("modal-content").innerHTML = "";
 		document.getElementById("modal").style.display='none';
 		return;
@@ -518,6 +517,8 @@ function showTutorialModal(idx) {
 	}
 
 	showModal("Tutoriel", innerHTML, () => {showTutorialModal(idx +1)}, "Suivant", idx != 0, "modal-tutorial", idx == 0 ? "Fermer" : "Annuler");
+	document.getElementById("modal-confirm").focus();
+	sessionStorage.setItem("isTutorialDone", "true");
 }
 	//	  ^^	MODAL FUNCTIONS   ^^
 async function init() {
