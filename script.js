@@ -300,6 +300,9 @@ function disableButtons() {
 		b.style.cursor = "wait";
 		b.setAttribute("disabled", "true");
 	});
+
+	if(document.getElementById("fileInput") != null)
+		document.getElementById("fileInput").setAttribute("disabled", "true");
 }
 function showModal(title, innerHTML, onConfirm, confirmLibelle, noCancel, classList, cancelLibelle) {
 	let modal = document.getElementById("modal");
@@ -324,8 +327,7 @@ function showModal(title, innerHTML, onConfirm, confirmLibelle, noCancel, classL
 	if(noCancel != true) {
 		document.getElementById("modal-cancel").onclick = () => {
 			disableButtons();
-			modalContent.innerHTML = "";
-			modal.style.display='none';
+			closeModal();
 		}
 	}
 }
@@ -335,7 +337,7 @@ function updateTotal(price) {
   const modalTotalPrice = document.getElementById("modalTotalPrice");
 
   modalSelectedQty.textContent = modalQuantity.value;
-  modalTotalPrice.textContent = formatCurrency(price * modalQuantity.value);
+  modalTotalPrice.textContent = price == -1 ? "±∞ €" : formatCurrency(price * modalQuantity.value);
 }	
 function generateModalBuy(product, addImage) {
 	product = decodeProduct(product);	
@@ -356,7 +358,7 @@ function generateModalBuy(product, addImage) {
         </div>
 
         <div class="total">
-            Total : <span id="modalTotalPrice">${formatCurrency(product.price * (product.remainQuantity >=1 ? 1 : product.remainQuantity))}</span>
+            Total : <span id="modalTotalPrice">${product.price > -1 ? (formatCurrency(product.price * (product.remainQuantity >=1 ? 1 : product.remainQuantity))) : "±∞ €"}</span>
         </div>`;
 
     if(addImage != undefined && addImage == true) {
@@ -403,14 +405,16 @@ function generateModalCart(products) {
   	products.forEach(p => {
   		let allBuyers = getAllBuyersForProduct(p.id);
   		let curPrice = p.amount * p.price;
-  		totalPrice += curPrice;
+  		totalPrice += p.price > -1 ? curPrice : 0;
+
+  		let displayPrice = p.price > -1 ? formatCurrency(p.price) : "±∞ €"
 
   		if(p.noConstraint != undefined && p.noConstraint == true) {
   			table += 
   				`<tr>
   					<td><a href="product.html?p=${p.id}" target="_blank">${p.title}</a></td>
   					<td>${p.amount}</td>
-  					<td class="cartPrice">${formatCurrency(curPrice)}</td>
+  					<td class="cartPrice">${displayPrice}</td>
   					<td><image src="img/bin.png" onclick="removeItemFromCart('${p.id}', this)"/></td>
   				</tr>`;
   		}else if(p.link != "") {
@@ -418,7 +422,7 @@ function generateModalCart(products) {
   				`<tr>
   					<td><a href="${p.link}" target="_blank">${p.title}</a></td>
   					<td>${p.amount}</td>
-  					<td class="cartPrice">${formatCurrency(curPrice)}</td>
+  					<td class="cartPrice">${displayPrice}</td>
   					<td><image src="img/bin.png" onclick="removeItemFromCart('${p.id}', this)"/></td>
   				</tr>`;
   		}else {
@@ -426,7 +430,7 @@ function generateModalCart(products) {
   				`<tr>
   					<td>${p.title}</td>
   					<td>${p.amount}</td>
-  					<td class="cartPrice">${formatCurrency(curPrice)}</td>
+  					<td class="cartPrice">${displayPrice}</td>
   					<td><image src="img/bin.png" onclick="removeItemFromCart('${p.id}', this)"/></td>
   				</tr>`;
   		}
@@ -520,7 +524,30 @@ function showTutorialModal(idx) {
 	document.getElementById("modal-confirm").focus();
 	sessionStorage.setItem("isTutorialDone", "true");
 }
+
+function closeModal() {
+	let modal = document.getElementById("modal");
+	let modalContent = document.getElementById("modal-content");
+
+	modalContent.innerHTML = "";
+	modal.style.display='none';
+}
 	//	  ^^	MODAL FUNCTIONS   ^^
+function initKeyListeners() {
+	document.addEventListener("keydown", (e) => {keyListener(e);});
+}
+function keyListener(event) {
+	let assignToModal = document.getElementById("modal").style.display != "none";
+	let assignToAuthControls = document.activeElement.id.startsWith("input-");
+
+	if(event.key === "Escape") {
+		if(assignToModal) closeModal();
+	}else if(event.key === "Enter") {
+		if(assignToAuthControls) login();
+		if(assignToModal) document.getElementById("modal-confirm").click();
+	}
+}
+
 async function init() {
 	loadUser();
 	showTutorialModal(0);
@@ -533,6 +560,7 @@ async function init() {
 	}
 
 	showAdminIfRequired();
+	initKeyListeners();
 }
 //	  ^^	PAGE FUNCTIONS    ^^
 

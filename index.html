@@ -43,7 +43,7 @@
     </div>
   </footer>
 
-  <div id="modal" class="modal-backdrop">
+  <div id="modal" class="modal-backdrop" onkeydown="function(e) {if (e.key === 'Escape') {document.getElementById('modal-content').innerHTML = ''; document.getElementById('modal').style.display='none'}">
   	<div id="modal-content" class="modal-content"></div>
   </div>
 
