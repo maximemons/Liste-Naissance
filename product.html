@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Liste de naissance</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div id="productInspirationDiv" style="display: none">
+    <h2>Liste d'inspirations :</h2>
+    <div id="productInspiration"></div>
+  </div>
+  <div id="boughtProductsDiv">
+    <h2>Liste des produits déjà achetés :</h2>
+    <p id="emptyList" style="display: none">La liste est vide</p>
+    <div id="boughtProducts" style="display: none"></div>
+  </div>
+  <script type="text/javascript" src="jsonbin.js"></script>
+  <script type="text/javascript" src="product.js"></script>
+
+  <style>
+    #productInspirationDiv, #boughtProductsDiv {
+      width: 80%;
+      display: block;
+      margin: 0px auto;
+    }
+
+    #productInspirationDiv {
+      height: 50%;
+    }
+
+    #productInspirationDiv iframe {
+      width:  100%;
+      height:  100%;
+    }
+
+    #boughtProducts img {
+      height: 200px;
+    }
+
+
+    #boughtProducts table {
+      font-family: Arial, Helvetica, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #boughtProducts td, #boughtProducts th {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: right;
+    }
+
+    #boughtProducts tr:nth-child(even){background-color: #f2f2f2;}
+
+    #boughtProducts thead {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #04AA6D;
+      color: white;
+    }
+  </style>
+</body>
+</html>

@@ -61,6 +61,18 @@ p.lead {
 .controls input, .controls button  {
     height: 32px;
 }
+
+#admin-btn {
+    background-color: white;
+    border: 1px solid lightgrey;
+}
+
+#right-controls {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
 .btn {
     padding: 8px 12px;
     border-radius: 10px;
@@ -334,8 +346,12 @@ footer {
   font-family: sans-serif;
 }
 
-.modal-cart {
+.modal-cart, .modal-tutorial {
     width: 600px !important;
+}
+
+.modal-tutorial img {
+    width: 100%;
 }
 
 #modal h2 {
@@ -375,4 +391,11 @@ footer {
   font-size: 1.2em;
   font-weight: bold;
   text-align: right;
+}
+
+.cardhead {
+    font-size: small;
+    text-align: right;
+    font-weight: bold;
+    color: orange;
 }

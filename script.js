@@ -1,73 +1,9 @@
-const BIN_ID = "68c30442ae596e708feb5d00";
-const API_KEY = "$2a$10$chQYHlc4IMp3aSZnO8xdWuEyNYirsSLYgwK/K0pdqBO2xrD0VrJxO";
-const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-
 let PRODUCTS = {};
 let CURRENT_USER = {};
 let MYBOUGHTS = [];
 
-
-//    vv    JSONBIN FONCTIONS    vv
-async function fetchJSONBIN() {
-  try {
-    const res = await fetch(API_URL + '/latest', {
-      headers: {
-        'X-Access-Key': API_KEY
-      }
-    });
-    if (!res.ok) throw new Error('Erreur lecture jsonbin: ' + res.status);
-    const data = await res.json();
-    const products = data && data.record ? data.record : data;
-    return products;
-  } catch (err) {
-    alert("Impossible de charger depuis la base de donnée");
-  }
-}
-async function updateProducts() {
-  await fetch(API_URL, {
-    method: 'PUT',
-    headers: { 'Content-Type':'application/json', 'X-Access-Key': API_KEY },
-    body: JSON.stringify(PRODUCTS)
-  });
-}
-//    ^^    JSONBIN FONCTIONS    ^^
 //    vv    APIS FONCTIONS    vv
-async function getAllProducts(force) {
-	if(force === true) {
-		PRODUCTS = await fetchJSONBIN();
-		return PRODUCTS;
-	}
-	if(Object.keys(PRODUCTS).length === 0)
-		PRODUCTS = await fetchJSONBIN();
-		
-	return PRODUCTS;
-}
-
-async function getAllBoughtsByUser(user) {
-	let userHash = userToHash(user);
-	let buyers = PRODUCTS.buyers;
-
-	let boughtByUser = [];
-
-	buyers.forEach(buyer => {
-		let buyerHash = userToHash(buyer);
-		if(buyerHash == userHash) {
-			let p = PRODUCTS.products.find(product => product.id === buyer.product_id);
-			p.amount = buyer.amount;
-			boughtByUser.push(p);
-		}
-	});
-
-	return boughtByUser;
-}
-
-function getAllBuyersForProduct(product_id) {
-	let buyers = PRODUCTS.buyers;
-
-	return buyers.filter(b => b.product_id === product_id) || [];
-}
-
-async function buy(user, product_id, amount) {
+async function buy(user, product_id, amount, fileInput) {
 	PRODUCTS = await getAllProducts(true); //ON SI JAMAIS QUELQU'UN A DEJA ACHETE ENTRE TEMPS
 
 	let products = PRODUCTS.products;
@@ -77,7 +13,13 @@ async function buy(user, product_id, amount) {
 	if(product.remainQuantity >= amount) {
 		product.remainQuantity -= amount;
 	}else {
-		return {"success": false, "reason": "toomuch"};
+		alert("Oops, quelqu'un a acheté entre temps, il n'y a plus assez de ce produit !");
+		reloadPage();
+	}
+
+	imageSrc = null;
+	if(fileInput != undefined) {
+		imageSrc = await fileInputToBase64(fileInput);
 	}
 
 	buyers.push({
@@ -86,12 +28,12 @@ async function buy(user, product_id, amount) {
 		"phone": user.phone,
 		"mail": user.mail,
 		"product_id": product_id,
-		"amount": amount
+		"amount": amount,
+		"imageSrc": imageSrc
 	});
 
 	await updateProducts();
 	reloadPage();
-	return {"success": true, "reason": null};
 }
 
 async function cancelBuy(user, product_id, noReload) {
@@ -139,8 +81,8 @@ function isLoginValid(u) {
 	const rePhone = /^(?:(?:0[1-9]\d{8})|\+33[1-9]\d{8})$/;
 	const reMail = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 	return {
-    	firstname: u.firstname ? u.firstname.trim().length > 2 : false,
-    	lastname: u.lastname ? u.lastname.trim().length > 2 : false,
+    	firstname: u.firstname ? u.firstname.trim().length >= 2 : false,
+    	lastname: u.lastname ? u.lastname.trim().length >= 2 : false,
     	phone: u.phone ? rePhone.test(u.phone.trim().replaceAll(".", "").replaceAll("-", "").replaceAll(" ", "")) : false,
     	mail: u.mail ? reMail.test(u.mail.trim().replaceAll(" ", "")) : false
 	};
@@ -167,6 +109,11 @@ function loadUser() {
   	document.getElementById("input-lastname").value = CURRENT_USER.lastname;
   	document.getElementById("input-phone").value = CURRENT_USER.phone;
   	document.getElementById("input-mail").value = CURRENT_USER.mail;
+
+  	document.getElementById("input-firstname").setAttribute("disabled", "true");
+  	document.getElementById("input-lastname").setAttribute("disabled", "true");
+  	document.getElementById("input-phone").setAttribute("disabled", "true");
+  	document.getElementById("input-mail").setAttribute("disabled", "true");
 
   	document.getElementById("welcomeUser").innerHTML = `Bienvenue <b>${CURRENT_USER.firstname}</b>`;
 }
@@ -197,7 +144,25 @@ async function showCart() {
 	let boughtList = await getAllBoughtsByUser(CURRENT_USER);
 	generateModalCart(boughtList);
 }
+
+function showAdminIfRequired() {
+	const admins = [
+		{firstname: "Maxime", lastname: "Mons", mail: "pro.maxime.mons@gmail.com", phone: "0636960412"},
+		{firstname: "Maurine", lastname: "Ceuninck", mail: "maurine.ceuninck@hotmail.fr", phone: "0781563277"}
+	];
+
+	if(userToHash(CURRENT_USER) == userToHash(admins[0]) ||
+	   userToHash(CURRENT_USER) == userToHash(admins[1])) {
+		let btn = document.createElement('button');
+		btn.id = "admin-btn";
+		btn.classList.add("btn");
+		btn.onclick= () => { window.open("admin.html?u=" + userToHash(CURRENT_USER), "_blank"); };
+		btn.innerText = "🌟";
+		document.getElementById("right-controls").appendChild(btn);
+	}
+}	
 	//	  vv	GRID FUNCTIONS 	  vv
+
 function unlockGrid() {
 	document.getElementById('gridOverlay').style.display = 'none';
 }
@@ -238,7 +203,12 @@ function renderSingleCard(product) {
   	card.className='card';
   	if(product.remainQuantity <= 0)
   		card.classList.add('grayed');
-  	if(product.link != null && product.link != undefined && product.link.length > 10) {
+  	if(product.noConstraint != undefined && product.noConstraint == true) {
+		card.addEventListener('click', (e)=>{
+	    	if(e.target.tagName.toLowerCase() === 'button' || e.target.closest('button')) return;
+	      	window.open("product.html?p=" + product.id, '_blank');
+		});
+	}else if(product.link != null && product.link != undefined && product.link.length > 10) {
 	    card.addEventListener('click', (e)=>{
 	    	if(e.target.tagName.toLowerCase() === 'button' || e.target.closest('button')) return;
 	      	window.open(product.link, '_blank');
@@ -246,10 +216,9 @@ function renderSingleCard(product) {
 	}
 
 	let canBuy = alreadyBought == null && product.remainQuantity > 0;
-	let canBuyAgain = alreadyBought != null && product.remainQuantity > 0;
 	let canCancelBuy = alreadyBought != null;
 
-	card.innerHTML = `
+	card.innerHTML += `
 	    <div class="media">
 	      <center>
 	        <img src="${product.image}" alt="${product.title}"/>
@@ -267,15 +236,16 @@ function renderSingleCard(product) {
 	              <div class="price">${formatCurrency(product.price)}</div>
 	              <div class="qty">Restant: <strong>${product.remainQuantity} / ${product.quantity}</strong></div>
 	            </div>`
-	if(canBuyAgain) {
-		card.innerHTML += `<div class="row full"><button class="btn buy" data-action="buy" onclick="showModelBuy('')">Acheter à nouveau</button></div>`;
-	}else if(canBuy) {
-		card.innerHTML += `<div class="row full"><button class="btn buy" data-action="buy" onclick="generateModalBuy('${encodeProduct(product)}')">Acheter</button></div>`;
+	if(canCancelBuy) {
+		card.innerHTML += `<div class="row full" style="z-index:99 !important"><button class="btn secondary" data-action="cancel" onclick="generateModalCancelBuy('${encodeProduct(product)}')">Annuler mon achat</button></div>`;
+	}else {
+		if(product.noConstraint != undefined && product.noConstraint == true) {
+			card.innerHTML += `<div class="row full"><button class="btn buy" data-action="buy" onclick="generateModalBuy('${encodeProduct(product)}', true)">Acheter</button></div>`;
+		}else {
+			card.innerHTML += `<div class="row full"><button class="btn buy" data-action="buy" onclick="generateModalBuy('${encodeProduct(product)}')">Acheter</button></div>`;
+		}
 	}
 
-	if(canCancelBuy) {
-		card.innerHTML += `<div class="row full" style="z-index:99 !important"><button class="btn secondary" data-action="cancel" onclick="generateModalCancelBuy('${encodeProduct(product)}')">Annuler mon achat</button></div>`;	
-	}
 	card.innerHTML += `</div></div></div></div>`;
 
 	if(product.remainQuantity <= 0){
@@ -289,8 +259,31 @@ function renderSingleCard(product) {
 }
 
 	//	  ^^	GRID FUNCTIONS 	  ^^
-	//	  vv	MODAL FUNCTIONS   vv	
-function showModal(title, innerHTML, onConfirm, confirmLibelle, noCancel, classList) {
+	//	  vv	IMAGE FUNCTIONS   vv
+function fileInputToBase64(fileInput) {
+	const file = fileInput.files[0];
+    if (!file) return null;
+
+	return new Promise((resolve, reject) => {
+	    if (!file) {
+	      reject("Aucun fichier fourni");
+	      return;
+	    }
+	    const reader = new FileReader();
+	    reader.onload = () => resolve(reader.result);
+	    reader.onerror = error => reject(error);
+	    reader.readAsDataURL(file);
+	});
+}
+	//	  ^^	IMAGE FUNCTIONS   ^^		
+	//	  vv	MODAL FUNCTIONS   vv
+function disableButtons() {
+	Array.from(document.getElementById("modal").getElementsByTagName("button")).forEach(b=> {
+		b.style.cursor = "wait";
+		b.setAttribute("disabled", "true");
+	});
+}
+function showModal(title, innerHTML, onConfirm, confirmLibelle, noCancel, classList, cancelLibelle) {
 	let modal = document.getElementById("modal");
 	let modalContent = document.getElementById("modal-content");
 	if(classList) {
@@ -301,16 +294,18 @@ function showModal(title, innerHTML, onConfirm, confirmLibelle, noCancel, classL
 
 	modalContent.innerHTML = `<div id="modal-title">${title}</div>` + innerHTML + `<div id="modal-action">`;
 	if(noCancel != true) {
-		modalContent.innerHTML += `<button id="modal-cancel" class="btn secondary">Annuler</button>`;
+		modalContent.innerHTML += `<button id="modal-cancel" class="btn secondary" style="margin-right: 10px;">${cancelLibelle || "Annuler"}</button>`;
 	}
 	modalContent.innerHTML += `<button id="modal-confirm" class="btn">${confirmLibelle}</button></div>`;;
 	modal.style.display='flex';
 
 	document.getElementById("modal-confirm").onclick = () => {
+		disableButtons();
 		onConfirm();
 	}
 	if(noCancel != true) {
 		document.getElementById("modal-cancel").onclick = () => {
+			disableButtons();
 			modalContent.innerHTML = "";
 			modal.style.display='none';
 		}
@@ -324,7 +319,7 @@ function updateTotal(price) {
   modalSelectedQty.textContent = modalQuantity.value;
   modalTotalPrice.textContent = formatCurrency(price * modalQuantity.value);
 }	
-function generateModalBuy(product) {
+function generateModalBuy(product, addImage) {
 	product = decodeProduct(product);	
 	let innerHTML = 
 		`<div class="product">
@@ -345,8 +340,28 @@ function generateModalBuy(product) {
         <div class="total">
             Total : <span id="modalTotalPrice">${formatCurrency(product.price * (product.remainQuantity >=1 ? 1 : product.remainQuantity))}</span>
         </div>`;
-     showModal("Acheter", innerHTML, ()=>{buy(CURRENT_USER, product.id, document.getElementById("modalQuantity").value);}, "Confirmer");
-     document.getElementById("modalQuantity").focus();
+
+    if(addImage != undefined && addImage == true) {
+    	innerHTML += 
+    	`<div style="border-top: 1px dashed black;margin-top: 10px;">
+    		<p>Souhaitez vous partager vos achats : </p>
+    		<div style="display: flex">
+    			<div>
+    				<input type="file" id="fileInput" accept="image/*" capture="environment" value="Ajoute une photo de ton achat" onchange="document.getElementById('rmvImg').style.display = 'inherit'">
+    			</div>
+    			<div id="rmvImg" style=" display: none; font-weight: bold; width: 100%; text-align: right;" onclick="removeImage(document.getElementById('fileInput'))">
+    				x
+    			</div>
+    		</div>
+    	</div>`;
+    }
+    showModal("Acheter", innerHTML, ()=>{buy(CURRENT_USER, product.id, document.getElementById("modalQuantity").value, document.getElementById("fileInput"));}, "Confirmer");
+    document.getElementById("modalQuantity").focus();
+}
+function removeImage(fileInput) {
+	fileInput.files = null;
+	document.getElementById("rmvImg").style.display = "none";
+
 }
 function generateModalCancelBuy(product) {
 	product = decodeProduct(product);
@@ -371,12 +386,32 @@ function generateModalCart(products) {
   		let allBuyers = getAllBuyersForProduct(p.id);
   		let curPrice = p.amount * p.price;
   		totalPrice += curPrice;
-  		table += `<tr>
+
+  		if(p.noConstraint != undefined && p.noConstraint == true) {
+  			table += 
+  				`<tr>
+  					<td><a href="product.html?p=${p.id}" target="_blank">${p.title}</a></td>
+  					<td>${p.amount}</td>
+  					<td class="cartPrice">${formatCurrency(curPrice)}</td>
+  					<td><image src="img/bin.png" onclick="removeItemFromCart('${p.id}', this)"/></td>
+  				</tr>`;
+  		}else if(p.link != "") {
+  			table += 
+  				`<tr>
+  					<td><a href="${p.link}" target="_blank">${p.title}</a></td>
+  					<td>${p.amount}</td>
+  					<td class="cartPrice">${formatCurrency(curPrice)}</td>
+  					<td><image src="img/bin.png" onclick="removeItemFromCart('${p.id}', this)"/></td>
+  				</tr>`;
+  		}else {
+  			table += 
+  				`<tr>
   					<td>${p.title}</td>
   					<td>${p.amount}</td>
   					<td class="cartPrice">${formatCurrency(curPrice)}</td>
   					<td><image src="img/bin.png" onclick="removeItemFromCart('${p.id}', this)"/></td>
-  				 </tr>`;
+  				</tr>`;
+  		}
   		
   		let phones = allBuyers.map(item => ({
   			"name": (item.firstname + " " + item.lastname.charAt(0) + "."),
@@ -430,10 +465,46 @@ function removeItemFromCart(product_id, event) {
 
 	cancelBuy(CURRENT_USER, product_id, true);
 }
-	//	  ^^	MODAL FUNCTIONS   ^^
 
+function showTutorialModal(idx) {
+	if(sessionStorage.getItem("isTutorialDone") != undefined && sessionStorage.getItem("isTutorialDone") == "true")
+		return;
+
+	const tutorialSteps = [
+		{text: "Bienvenue sur notre liste de naissance !<br/><br/>Le site permets a nos proches de se coordonner sur les achats.<br>Il se sert pas a acheter, juste à \"réserver\" des articles.<br/><br/>Bonne visite !", img: null},
+		{text: "Voici une courte présentation du site :", img: "img/tuto/tuto_1.png"},
+		{text: "Commence d'abord par d'authentifier :", img: "img/tuto/tuto_2.png"},
+		{text: "Si un article d'interesse, tu peux cliquer sur l'objet :", img: "img/tuto/tuto_3_2.png"},
+		{text: "Le lien vers un site d'achat de ce produit va s'ouvrir dand un nouvel onglet :", img: "img/tuto/tuto_4.png"},
+		{text: "Si tu veux l'acheter, réserve le en cliquant sur \"Acheter\". Ça évitera de l'acheter en double.", img: "img/tuto/tuto_5_2.png"},
+		{text: "Tu peux choisir d'en acheter un, plusieurs, ou une partie d'un article (certains articles peuvent être onéreux, d'où l'intéret de le partager) :", img: "img/tuto/tuto_6_2.png"},
+		{text: "Tu retrouveras tes achats dans le panier en haut à droite :", img: "img/tuto/tuto_7_2.png"},
+		{text: "Tu peux annuler un achat en cliquant sur la corbeille.", img: "img/tuto/tuto_8_2.png"},
+		{text: "En cas d'achat partiel, si quelqu'un d'autre souhaite participer également, tu trouveras les coordonnées de la personne pour pouvoir vous organiser :", img: "img/tuto/tuto_9_2.png"},
+		{text: "Pour rappel, ne te sens obligé de rien !<br/>Ta seule présence dans la vie de Johanne est déjà le plus beau des cadeaux ❤️", img:null}
+	];
+
+	if(idx >= tutorialSteps.length) {
+		sessionStorage.setItem("isTutorialDone", "true");
+		document.getElementById("modal-content").innerHTML = "";
+		document.getElementById("modal").style.display='none';
+		return;
+	}
+
+	let innerHTML = "";
+
+	if(tutorialSteps[idx].text != null) {
+		innerHTML += `<p>${tutorialSteps[idx].text}</p>`;
+	}if(tutorialSteps[idx].img != null) {
+		innerHTML += `<img src='${tutorialSteps[idx].img}'/>`;
+	}
+
+	showModal("Tutoriel", innerHTML, () => {showTutorialModal(idx +1)}, "Suivant", idx != 0, "modal-tutorial", idx == 0 ? "Fermer" : "Annuler");
+}
+	//	  ^^	MODAL FUNCTIONS   ^^
 async function init() {
 	loadUser();
+	showTutorialModal(0);
 	await getAllProducts();
 	MYBOUGHTS = await getAllBoughtsByUser(CURRENT_USER);
 	orderProductsAndDisplay();
@@ -441,33 +512,9 @@ async function init() {
 	if(MYBOUGHTS.length > 0) {
 		document.getElementById("btn-chart").innerHTML += " <sup><sup>" + (MYBOUGHTS.length > 9 ? "9+" : MYBOUGHTS.length) +"</sup></sup>";
 	}
+
+	showAdminIfRequired();
 }
 //	  ^^	PAGE FUNCTIONS    ^^
 
 init();
-
-
-function envoyerEmail(nom, email, cc, message) {
-    const formData = new FormData();
-    formData.append('nom', nom);
-    formData.append('email', email);
-    formData.append('message', message);
-    formData.append('_subject', 'Nouveau message depuis mon site !');
-    formData.append('_captcha', 'false');
-    if(cc) formData.append('_cc', 'pro.maxime.mons@gmail.com');
-
-    fetch('https://formsubmit.co/pro.maxime.mons@gmail.com', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (response.ok) {
-            console.log('Email envoyé avec succès !');
-        } else {
-            throw new Error("Erreur lors de l'envoi de l'email.");
-        }
-    })
-    .catch(error => {
-        console.error('Erreur :', error);
-    });
-}
