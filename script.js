@@ -26,7 +26,6 @@ async function buy(user, product_id, amount, fileInput) {
 		"firstname": user.firstname,
 		"lastname": user.lastname,
 		"phone": user.phone,
-		"mail": user.mail,
 		"product_id": product_id,
 		"amount": amount,
 		"imageSrc": imageSrc
@@ -69,7 +68,7 @@ async function cancelBuy(user, product_id, noReload) {
 //    ^^    APIS FONCTIONS    ^^
 //    vv    USER FONCTIONS    vv
 function userToHash(user) {
-	let str = user.firstname + user.lastname + user.phone + user.mail;
+	let str = user.firstname + user.lastname + user.phone;
 	let hash = 0;
   	for (let i = 0; i < str.length; i++) {
     	hash = ((hash << 5) - hash) + str.charCodeAt(i);
@@ -79,19 +78,16 @@ function userToHash(user) {
 }
 function isLoginValid(u) {
 	const rePhone = /^(?:(?:0[1-9]\d{8})|\+33[1-9]\d{8})$/;
-	const reMail = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 	return {
     	firstname: u.firstname ? u.firstname.trim().length >= 2 : false,
     	lastname: u.lastname ? u.lastname.trim().length >= 2 : false,
-    	phone: u.phone ? rePhone.test(u.phone.trim().replaceAll(".", "").replaceAll("-", "").replaceAll(" ", "")) : false,
-    	mail: u.mail ? reMail.test(u.mail.trim().replaceAll(" ", "")) : false
+    	phone: u.phone ? rePhone.test(u.phone.trim().replaceAll(".", "").replaceAll("-", "").replaceAll(" ", "")) : false
 	};
 }
 function showIncorrectLoginInputs(i) {
   document.getElementById("input-firstname").style.border = i.firstname ? '1px solid black' : '2px solid red';
   document.getElementById("input-lastname").style.border = i.lastname ? '1px black' : '2px solid red'
   document.getElementById("input-phone").style.border = i.phone ? '1px solid black' : '2px solid red';
-  document.getElementById("input-mail").style.border = i.mail ? '1px solid black' : '2px solid red';
 }
 function loadUser() {
   	CURRENT_USER = sessionStorage.getItem('registry_user') ? JSON.parse(sessionStorage.getItem('registry_user')) : {};
@@ -108,12 +104,10 @@ function loadUser() {
   	document.getElementById("input-firstname").value = CURRENT_USER.firstname;
   	document.getElementById("input-lastname").value = CURRENT_USER.lastname;
   	document.getElementById("input-phone").value = CURRENT_USER.phone;
-  	document.getElementById("input-mail").value = CURRENT_USER.mail;
 
   	document.getElementById("input-firstname").setAttribute("disabled", "true");
   	document.getElementById("input-lastname").setAttribute("disabled", "true");
   	document.getElementById("input-phone").setAttribute("disabled", "true");
-  	document.getElementById("input-mail").setAttribute("disabled", "true");
 
   	document.getElementById("welcomeUser").innerHTML = `Bienvenue <b>${CURRENT_USER.firstname}</b>`;
 }
@@ -121,8 +115,7 @@ function login() {
 	let registryUser = {
     	firstname: document.getElementById("input-firstname").value,
     	lastname: document.getElementById("input-lastname").value,
-    	phone: document.getElementById("input-phone").value,
-    	mail: document.getElementById("input-mail").value
+    	phone: document.getElementById("input-phone").value
   	};
   	let u = isLoginValid(registryUser);
   	if (!(Object.values(u).every(value => value === true))) {
@@ -147,8 +140,8 @@ async function showCart() {
 
 function showAdminIfRequired() {
 	const admins = [
-		{firstname: "Maxime", lastname: "Mons", mail: "pro.maxime.mons@gmail.com", phone: "0636960412"},
-		{firstname: "Maurine", lastname: "Ceuninck", mail: "maurine.ceuninck@hotmail.fr", phone: "0781563277"}
+		{firstname: "Maxime", lastname: "Mons", phone: "0636960412"},
+		{firstname: "Maurine", lastname: "Ceuninck", phone: "0781563277"}
 	];
 
 	if(userToHash(CURRENT_USER) == userToHash(admins[0]) ||

@@ -15,7 +15,7 @@ async function initPoducts() {
 
 function render() {
 	if((CURRENT_PRODUCT.link || null) != null && CURRENT_PRODUCT.link.length > 3) {
-		document.getElementById("productInspiration").innerHTML = CURRENT_USER.link;
+		document.getElementById("productInspiration").innerHTML = CURRENT_PRODUCT.link;
 		document.getElementById("productInspirationDiv").style.display = "inherit";
 	}
 

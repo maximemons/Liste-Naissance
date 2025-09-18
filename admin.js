@@ -1,12 +1,12 @@
 let PRODUCTS = {};
 
 const validAdmins = [
-	{firstname: "Maxime", lastname: "Mons", mail: "pro.maxime.mons@gmail.com", phone: "0636960412"},
-	{firstname: "Maurine", lastname: "Ceuninck", mail: "maurine.ceuninck@hotmail.fr", phone: "0781563277"}
+	{firstname: "Maxime", lastname: "Mons", phone: "0636960412"},
+	{firstname: "Maurine", lastname: "Ceuninck", phone: "0781563277"}
 ];
 
 function userToHash(user) {
-	let str = user.firstname + user.lastname + user.phone + user.mail;
+	let str = user.firstname + user.lastname + user.phone;
 	let hash = 0;
   	for (let i = 0; i < str.length; i++) {
     	hash = ((hash << 5) - hash) + str.charCodeAt(i);
@@ -51,7 +51,6 @@ async function displayResult() {
 			document.getElementById("tbody").innerHTML += 
 			`<tr>
 				<td colspan="2">${b.firstname} ${b.lastname}</td>
-				<td>${b.mail}</td>
 				<td>${b.phone}</td>
 				<td>${b.product_id}</td>
 				<td>${b.amount}</td>
@@ -61,7 +60,6 @@ async function displayResult() {
 			document.getElementById("tbody").innerHTML += 
 			`<tr>
 				<td colspan="2">${b.firstname} ${b.lastname}</td>
-				<td>${b.mail}</td>
 				<td>${b.phone}</td>
 				<td>${b.product_id}</td>
 				<td colspan="2">${b.amount}</td>
