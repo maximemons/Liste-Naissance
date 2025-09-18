@@ -255,7 +255,7 @@ async function fileInputToBase64(fileInput) {
 
 	return await compressImage(file);
 }
-async function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.7) {
+async function compressImage(file, maxWidth = 400, maxHeight = 400, quality = 0.5) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
