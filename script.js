@@ -249,21 +249,50 @@ function renderSingleCard(product) {
 
 	//	  ^^	GRID FUNCTIONS 	  ^^
 	//	  vv	IMAGE FUNCTIONS   vv
-function fileInputToBase64(fileInput) {
+async function fileInputToBase64(fileInput) {
 	const file = fileInput.files[0];
     if (!file) return null;
 
-	return new Promise((resolve, reject) => {
-	    if (!file) {
-	      reject("Aucun fichier fourni");
-	      return;
-	    }
-	    const reader = new FileReader();
-	    reader.onload = () => resolve(reader.result);
-	    reader.onerror = error => reject(error);
-	    reader.readAsDataURL(file);
-	});
+	return await compressImage(file);
 }
+async function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.7) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onload = event => {
+      const img = new Image();
+      img.src = event.target.result;
+
+      img.onload = () => {
+        let { width, height } = img;
+
+        // Redimensionnement proportionnel
+        if (width > maxWidth || height > maxHeight) {
+          const scale = Math.min(maxWidth / width, maxHeight / height);
+          width = width * scale;
+          height = height * scale;
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Compression en JPEG
+        const base64 = canvas.toDataURL("image/jpeg", quality);
+        resolve(base64);
+      };
+
+      img.onerror = err => reject(err);
+    };
+
+    reader.onerror = err => reject(err);
+  });
+}
+
 	//	  ^^	IMAGE FUNCTIONS   ^^		
 	//	  vv	MODAL FUNCTIONS   vv
 function disableButtons() {
