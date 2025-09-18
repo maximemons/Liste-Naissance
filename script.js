@@ -183,10 +183,10 @@ function orderProductsAndDisplay() {
 }
 
 function encodeProduct(product) {
-	return encodeURI(JSON.stringify(product));
+	return encodeURI(JSON.stringify(product)).replaceAll("'", "%27");
 }
 function decodeProduct(product) {
-	return JSON.parse(decodeURI(product));
+	return JSON.parse(decodeURI(product.replaceAll("%27", "'")));
 }
 
 function renderSingleCard(product) {
@@ -232,11 +232,7 @@ function renderSingleCard(product) {
 	if(canCancelBuy) {
 		card.innerHTML += `<div class="row full" style="z-index:99 !important"><button class="btn secondary" data-action="cancel" onclick="generateModalCancelBuy('${encodeProduct(product)}')">Annuler mon achat</button></div>`;
 	}else {
-		if(product.noConstraint != undefined && product.noConstraint == true) {
-			card.innerHTML += `<div class="row full"><button class="btn buy" data-action="buy" onclick="generateModalBuy('${encodeProduct(product)}', true)">Acheter</button></div>`;
-		}else {
-			card.innerHTML += `<div class="row full"><button class="btn buy" data-action="buy" onclick="generateModalBuy('${encodeProduct(product)}')">Acheter</button></div>`;
-		}
+			card.innerHTML += `<div class="row full"><button class="btn buy" data-action="buy" onclick="generateModalBuy('${encodeProduct(product)}', ${(product.noConstraint != undefined && product.noConstraint == true)})">Acheter</button></div>`;
 	}
 
 	card.innerHTML += `</div></div></div></div>`;
