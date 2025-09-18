@@ -38,7 +38,6 @@ async function displayResult() {
 				<tr>
 					<td><span onclick="window.location.reload()">🗘</span></td>
 					<td>Qui</td>
-					<td>Mail</td>
 					<td>Tel</td>
 					<td>Quoi</td>
 					<td colspan="2">Combien</td>
