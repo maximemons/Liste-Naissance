@@ -18,7 +18,10 @@ function render() {
 		let iframe = document.createElement("iframe");
 		iframe.src = CURRENT_PRODUCT.link;
 		document.getElementById("productInspiration").appendChild(iframe);
-		document.getElementById("productInspirationDiv").style.display = "inherit";
+	}else {
+		let p = document.createElement("p");
+		p.innerText = "Vous avez notre entière confiance ! Faites vous plaisir 😉";
+		document.getElementById("productInspiration").appendChild(p);
 	}
 
 	let images = BUYERS_CURRENT_PRODUCT.filter(b => b.imageSrc != null);
