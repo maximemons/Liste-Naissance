@@ -160,6 +160,12 @@ function unlockGrid() {
 	document.getElementById('gridOverlay').style.display = 'none';
 }
 
+function formatCategTitle(categ) {
+  if (categ == undefined) return "Autre";
+  const lower = categ.toLowerCase();
+  return lower.charAt(0).toUpperCase() + lower.slice(1);
+}
+
 function orderProductsAndDisplay() {
 	PRODUCTS.products.sort((a, b) => {
 	    const remA = a.remainQuantity;
@@ -177,8 +183,24 @@ function orderProductsAndDisplay() {
 
   	const grid = document.getElementById("grid");
 
-  	PRODUCTS.products.forEach(prod=>{
-    	grid.appendChild(renderSingleCard(prod));
+  	let categs = [...new Set(PRODUCTS.products.map(item => item.categ))].sort();
+  	categs.forEach(categ => {
+  		let divCateg = document.createElement("div");
+  		divCateg.classList.add("category");
+  		let h2title = document.createElement("h2");
+  		h2title.classList.add("category-title");
+  		h2title.innerText = formatCategTitle(categ);
+  		divCateg.appendChild(h2title);
+  		let divCards = document.createElement("div");
+  		divCards.classList.add("cards");
+
+  		let prodCateg = PRODUCTS.products.filter(p => p.categ == categ);
+  		prodCateg.forEach(p => {
+  			divCards.appendChild(renderSingleCard(p));
+  		});
+
+  		divCateg.appendChild(divCards);
+  		grid.appendChild(divCateg);
   	});
 }
 
