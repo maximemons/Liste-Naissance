@@ -409,3 +409,27 @@ footer {
   grid-template-columns: repeat(auto-fill, minmax(var(--card-size-w), 1fr));
   gap: 18px;
 }
+
+@media (max-width: 600px) {
+    .controls {
+        flex-direction: column; /* met tout en colonne */
+        align-items: stretch;   /* pour que les éléments prennent toute la largeur */
+    }
+
+    .controls .auth {
+        flex-wrap: wrap; /* que les inputs ne débordent pas */
+        width: 100%;     /* occupe toute la largeur */
+    }
+
+    #right-controls {
+        margin-left: 0;  /* reset du margin auto */
+        width: 100%;
+        justify-content: flex-end; /* tu peux centrer ou aligner comme tu veux */
+    }
+
+    .controls input,
+    .controls button {
+        flex: 1; /* optionnel : pour que ça s’étire */
+        min-width: 120px; /* évite que ça devienne trop petit */
+    }
+}
