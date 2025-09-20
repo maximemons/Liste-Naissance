@@ -73,6 +73,7 @@ p.lead {
     gap: 8px;
     align-items: center;
 }
+
 .btn {
     padding: 8px 12px;
     border-radius: 10px;
@@ -411,25 +412,31 @@ footer {
 }
 
 @media (max-width: 600px) {
-    .controls {
-        flex-direction: column; /* met tout en colonne */
-        align-items: stretch;   /* pour que les éléments prennent toute la largeur */
-    }
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-    .controls .auth {
-        flex-wrap: wrap; /* que les inputs ne débordent pas */
-        width: 100%;     /* occupe toute la largeur */
-    }
+  .controls .auth {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 
-    #right-controls {
-        margin-left: 0;  /* reset du margin auto */
-        width: 100%;
-        justify-content: flex-end; /* tu peux centrer ou aligner comme tu veux */
-    }
+  .controls .auth button {
+    flex: 1 1 100%;
+    max-width: 184px;
+  }
 
-    .controls input,
-    .controls button {
-        flex: 1; /* optionnel : pour que ça s’étire */
-        min-width: 120px; /* évite que ça devienne trop petit */
-    }
+  #right-controls {
+    justify-content: center;
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .grayed {
+    display: none;
+  }
+  .grid {
+    justify-content: center;
+  }
 }
