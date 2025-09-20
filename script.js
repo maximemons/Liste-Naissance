@@ -348,7 +348,6 @@ function showModal(title, innerHTML, onConfirm, confirmLibelle, noCancel, classL
 	}
 	if(noCancel != true) {
 		document.getElementById("modal-cancel").onclick = () => {
-			disableButtons();
 			closeModal();
 		}
 	}
@@ -511,7 +510,7 @@ function removeItemFromCart(product_id, event) {
 }
 
 function showTutorialModal(idx) {
-	if(sessionStorage.getItem("isTutorialDone") != undefined && sessionStorage.getItem("isTutorialDone") == "true")
+	if(sessionStorage.getItem("isTutorialDone") != undefined && sessionStorage.getItem("isTutorialDone") == "true" && idx == 0)
 		return;
 
 	const tutorialSteps = [
@@ -563,10 +562,19 @@ function keyListener(event) {
 	let assignToAuthControls = document.activeElement.id.startsWith("input-");
 
 	if(event.key === "Escape") {
-		if(assignToModal) closeModal();
+		if(assignToModal) {
+			event.preventDefault()
+			closeModal();
+		}
 	}else if(event.key === "Enter") {
-		if(assignToAuthControls) login();
-		if(assignToModal) document.getElementById("modal-confirm").click();
+		if(assignToAuthControls) {
+			event.preventDefault();
+			login();
+		}
+		if(assignToModal) {
+			event.preventDefault();
+			document.getElementById("modal-confirm").click();
+		}
 	}
 }
 
