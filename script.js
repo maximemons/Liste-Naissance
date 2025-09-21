@@ -538,17 +538,17 @@ function showTutorialModal(idx) {
 		return;
 
 	const tutorialSteps = [
-		{text: "Bienvenue sur notre liste de naissance !<br/><br/>Le site permets a nos proches de se coordonner sur les achats.<br>Il se sert pas a acheter, juste à \"réserver\" des articles.<br/><br/>Bonne visite !", img: null},
+		{text: "Bienvenue sur notre liste de naissance !<br/><br/>Ce site permet à nos proches de se coordonner sur les achats.<br/>Il ne sert pas à acheter, mais simplement à \"réserver\" des articles.<br/><br/>Bonne visite !", img: null},
 		{text: "Voici une courte présentation du site :", img: "img/tuto/tuto_1.png"},
-		{text: "Commence d'abord par d'authentifier :", img: "img/tuto/tuto_2.png"},
-		{text: "Si un article d'interesse, tu peux cliquer sur l'objet :", img: "img/tuto/tuto_3_2.png"},
-		{text: "Le lien vers un site d'achat de ce produit va s'ouvrir dand un nouvel onglet :", img: "img/tuto/tuto_4.png"},
-		{text: "Si tu veux l'acheter, réserve le en cliquant sur \"Acheter\". Ça évitera de l'acheter en double.", img: "img/tuto/tuto_5_2.png"},
-		{text: "Tu peux choisir d'en acheter un, plusieurs, ou une partie d'un article (certains articles peuvent être onéreux, d'où l'intéret de le partager) :", img: "img/tuto/tuto_6_2.png"},
+		{text: "Commence d'abord par t'authentifier :", img: "img/tuto/tuto_2.png"},
+		{text: "Si un article t'intéresse, tu peux cliquer sur l'objet :", img: "img/tuto/tuto_3_2.png"},
+		{text: "Le lien vers un site d'achat de ce produit va s'ouvrir dans un nouvel onglet :", img: "img/tuto/tuto_4.png"},
+		{text: "Si tu veux l'acheter, réserve-le en cliquant sur \"Acheter\". Ça évitera de l'acheter en double.", img: "img/tuto/tuto_5_2.png"},
+		{text: "Tu peux choisir d'en acheter un, plusieurs, ou une partie (certains articles peuvent être onéreux, d'où l'intérêt de les partager) :", img: "img/tuto/tuto_6_2.png"},
 		{text: "Tu retrouveras tes achats dans le panier en haut à droite :", img: "img/tuto/tuto_7_2.png"},
 		{text: "Tu peux annuler un achat en cliquant sur la corbeille.", img: "img/tuto/tuto_8_2.png"},
-		{text: "En cas d'achat partiel, si quelqu'un d'autre souhaite participer également, tu trouveras les coordonnées de la personne pour pouvoir vous organiser :", img: "img/tuto/tuto_9_2.png"},
-		{text: "Pour rappel, ne te sens obligé de rien !<br/>Ta seule présence dans la vie de Johanne est déjà le plus beau des cadeaux ❤️", img:null}
+		{text: "En cas d'achat partiel, si quelqu'un d'autre souhaite participer également, tu trouveras ses coordonnées afin de pouvoir vous organiser :", img: "img/tuto/tuto_9_2.png"},
+		{text: "Pour rappel, ne te sens obligé de rien !<br/>Ta seule présence dans la vie de Johanne est déjà le plus beau des cadeaux ❤️", img: null}
 	];
 
 	if(idx >= tutorialSteps.length) {
