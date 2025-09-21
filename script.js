@@ -548,6 +548,7 @@ function showTutorialModal(idx) {
 		{text: "Tu retrouveras tes achats dans le panier en haut à droite :", img: "img/tuto/tuto_7_2.png"},
 		{text: "Tu peux annuler un achat en cliquant sur la corbeille.", img: "img/tuto/tuto_8_2.png"},
 		{text: "En cas d'achat partiel, si quelqu'un d'autre souhaite participer également, tu trouveras ses coordonnées afin de pouvoir vous organiser :", img: "img/tuto/tuto_9_2.png"},
+		{text: "Les macarons \"OCCASION\" sont là pour signaler les articles sur lesquels nous ne sommes pas fermés à la seconde main. Sauf pour les macarons \"NEUF\", vous n'êtes pas obligés de suivre la consigne :", img: "img/tuto/tuto_10.png"},
 		{text: "Pour rappel, ne te sens obligé de rien !<br/>Ta seule présence dans la vie de Johanne est déjà le plus beau des cadeaux ❤️", img: null}
 	];
 
