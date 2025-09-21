@@ -36,6 +36,7 @@ async function displayResult() {
 		`<table>
 			<thead>
 				<tr>
+					<td><span><input type="checkbox" onchange="showImages(this)"> Afficher les images</span></td>
 					<td><span onclick="window.location.reload()">🗘</span></td>
 					<td>Qui</td>
 					<td>Tel</td>
@@ -49,20 +50,31 @@ async function displayResult() {
 		if(b.imageSrc != undefined && b.imageSrc.length > 2) {
 			document.getElementById("tbody").innerHTML += 
 			`<tr>
-				<td colspan="2">${b.firstname} ${b.lastname}</td>
+				<td colspan="3">${b.firstname} ${b.lastname}</td>
 				<td>${b.phone}</td>
 				<td>${b.product_id}</td>
 				<td>${b.amount}</td>
-				<td><img src="${b.imageSrc}"/></td>
+				<td><img class="images" src="${b.imageSrc}" style="display: none"/></td>
 			</tr>`;
 		}else {
 			document.getElementById("tbody").innerHTML += 
 			`<tr>
-				<td colspan="2">${b.firstname} ${b.lastname}</td>
+				<td colspan="3">${b.firstname} ${b.lastname}</td>
 				<td>${b.phone}</td>
 				<td>${b.product_id}</td>
 				<td colspan="2">${b.amount}</td>
 			</tr>`;
+		}
+	});
+}
+
+function showImages(checkbox) {
+	let images = document.querySelectorAll('.images');
+	images.forEach(image => {
+		if(checkbox.checked) {
+			image.style.display = "inherit";
+		}else {
+			image.style.display = "none";
 		}
 	});
 }

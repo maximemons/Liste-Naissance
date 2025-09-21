@@ -23,7 +23,7 @@ body {
 body {
     margin: 0;
     padding: 28px;
-    background: linear-gradient(180deg, #f8fafc 0%, var(--bg) 100%);
+    background: /*linear-gradient(180deg, #f8fafc 0%, */var(--bg)/* 100%)*/;
     color: var(--accent);
 }
 header {
@@ -52,13 +52,13 @@ p.lead {
     gap: 8px;
     align-items: center;
 }
-.controls input[type="text"] {
+.controls input[type="text"], .filter {
     padding: 8px 10px;
     border-radius: 8px;
     border: 1px solid #e6e9ef;
     background: #fff;
 }
-.controls input, .controls button  {
+.controls input, .controls button, .filter  {
     height: 32px;
 }
 
@@ -263,7 +263,7 @@ footer {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    z-index: 100;
+    z-index: 1000;
 }
 .modal {
     background: #fff;
@@ -411,6 +411,73 @@ footer {
   gap: 18px;
 }
 
+#filter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;       
+
+  top: 0;
+  background: var(--bg);
+  padding: 10px;
+  z-index: 1000;   
+  width: 100%;
+
+  position: sticky;
+}
+
+#filter img {
+    height:  20px;
+}
+
+#filter select {
+    color:  black;
+    background-color:  white;
+}
+
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background-color: #333;
+  color: white;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 24px;
+  z-index: 1000;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+
+.back-to-top:hover {
+  opacity: 1;
+}
+
+.badge {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.new {
+    background: #d1fae5;
+    color: #065f46; 
+}
+
+.used {
+    background: #fde68a;
+    color: #92400e; 
+}
+
 @media (max-width: 600px) {
   .controls {
     flex-direction: column;
@@ -432,11 +499,10 @@ footer {
     margin-left: 0;
     width: 100%;
   }
-
-  .grayed {
-    display: none;
-  }
-  .grid {
+  .grid, #filter {
     justify-content: center;
+  }
+  .card {
+    margin: 0px auto;
   }
 }

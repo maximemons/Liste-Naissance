@@ -31,10 +31,23 @@
 
   <main>
   	<div id="gridWrapper" style="position: relative;">
-      <div id="grid" class="grid"></div>
+      <div id="grid" class="grid">
+        <div id="filter">
+          <img src="img/filter.png">
+          <select id="filterSelect" onchange="applayFilter(this)" class="btn">
+            <option value="welcomeUser">Toutes les catégories</option>
+          </select>
+          <input id="checkboxDone" type="checkbox" style="transform: scale(1.5); margin: 5px;" checked/> Afficher les articles épuisés ?
+        </div>
+
+      </div>
       <div id="gridOverlay" class="overlay"></div>
     </div>
   </main>
+
+  <div id="backToTop" class="back-to-top" style="display: none">
+    <span>↑</span>
+  </div>
 
   <footer>
     <div>

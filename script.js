@@ -184,9 +184,18 @@ function orderProductsAndDisplay() {
   	const grid = document.getElementById("grid");
 
   	let categs = [...new Set(PRODUCTS.products.map(item => item.categ))].sort();
+
+  	if(categs.indexOf("++") > -1) {
+  		categs.splice(categs.indexOf("++"), 1);
+  		categs.push("++");
+  	}
+
+  	let filters = document.getElementById("filterSelect");
   	categs.forEach(categ => {
   		let divCateg = document.createElement("div");
   		divCateg.classList.add("category");
+  		divCateg.id = formatCategTitle(categ).replaceAll(" ", "");
+  		divCateg.setAttribute("style", "scroll-margin-top: 50px");
   		let h2title = document.createElement("h2");
   		h2title.classList.add("category-title");
   		h2title.innerText = formatCategTitle(categ);
@@ -201,6 +210,12 @@ function orderProductsAndDisplay() {
 
   		divCateg.appendChild(divCards);
   		grid.appendChild(divCateg);
+
+  		let option = document.createElement("option");
+  		option.value = formatCategTitle(categ).replaceAll(" ", "");
+  		option.text = formatCategTitle(categ);
+
+  		filters.appendChild(option);
   	});
 }
 
@@ -232,6 +247,15 @@ function renderSingleCard(product) {
 
 	let canBuy = alreadyBought == null && product.remainQuantity > 0;
 	let canCancelBuy = alreadyBought != null;
+
+	if(product.newOrUsed != undefined && (product.newOrUsed == "n" || product.newOrUsed == "u")) {
+		let badge = document.createElement("span");
+		badge.innerText = product.newOrUsed == "n" ? "NEUF" : "OCCASION";
+		badge.classList.add("badge");
+		badge.classList.add(product.newOrUsed == "n" ? "new" : "used");
+
+		card.appendChild(badge);
+	}
 
 	card.innerHTML += `
 	    <div class="media">
@@ -578,6 +602,14 @@ function keyListener(event) {
 	}
 }
 
+function applayFilter(select) {
+	document.getElementById(select.value).scrollIntoView({ behavior: "smooth" });
+}
+
+function initScrollFilter() {
+	
+}
+
 async function init() {
 	loadUser();
 	showTutorialModal(0);
@@ -595,3 +627,60 @@ async function init() {
 //	  ^^	PAGE FUNCTIONS    ^^
 
 init();
+document.addEventListener('DOMContentLoaded', function() {
+  // Fonction pour vérifier quelle section est visible
+  function checkVisibleSections() {
+  	const select = document.getElementById('filter');
+	  const sections = document.querySelectorAll('.category');
+  
+  	  let currentSectionId = null;
+    sections.forEach(section => {
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= 100 && rect.bottom >= 100) {
+        currentSectionId = section.id;
+      }
+    });
+
+    if (currentSectionId) {
+    	let options = Array.from(select.getElementsByTagName("option"));
+    	let optionsValues = options.map((o) => o.value);
+
+    	if(optionsValues.indexOf(currentSectionId) == -1) return;
+    	options.forEach(option => {
+    		option.selected = option.value == currentSectionId;
+    	});
+    }
+  }
+
+  const backToTop = document.getElementById('backToTop');
+
+  backToTop.addEventListener('click', function() {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+
+  window.addEventListener('scroll', function() {
+  	checkVisibleSections();
+
+    if (window.pageYOffset > 300) {
+      backToTop.style.display = 'flex';
+    } else {
+      backToTop.style.display = 'none';
+    }
+  });
+
+  document.getElementById("checkboxDone").addEventListener("change", function() {
+  	let checkbox = document.getElementById("checkboxDone");
+
+  	let cardsGrayed = document.querySelectorAll('.grayed');
+  	cardsGrayed.forEach(card => {
+  		if(checkbox.checked) {
+  			card.style.display = "inherit";
+  		}else {
+  			card.style.display = "none";
+  		}
+  	});
+  });
+});
