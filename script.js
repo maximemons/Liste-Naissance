@@ -250,7 +250,7 @@ function renderSingleCard(product) {
 
 	if(product.newOrUsed != undefined && (product.newOrUsed == "n" || product.newOrUsed == "u")) {
 		let badge = document.createElement("span");
-		badge.innerText = product.newOrUsed == "n" ? "NEUF" : "OCCASION";
+		badge.innerText = product.newOrUsed == "n" ? "NEUF" : "NEUF | OCCASION";
 		badge.classList.add("badge");
 		badge.classList.add(product.newOrUsed == "n" ? "new" : "used");
 

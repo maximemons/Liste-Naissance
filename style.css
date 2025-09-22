@@ -474,8 +474,8 @@ footer {
 }
 
 .used {
-    background: #fde68a;
-    color: #92400e; 
+    background: linear-gradient(to right, #d1fae5 25%, #fde68a 75%);
+    color: #92400e;
 }
 
 @media (max-width: 600px) {
